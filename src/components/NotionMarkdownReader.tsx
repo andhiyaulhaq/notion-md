@@ -1,8 +1,11 @@
 import 'katex/dist/katex.min.css';
+import '../styles/notion-md.css';
 
+// ...existing code...
 import { useEffect, useRef, useState } from 'react';
 
 import { marked } from 'marked';
+import mermaid from 'mermaid';
 import renderMathInElement from 'katex/contrib/auto-render';
 
 interface NotionMarkdownReaderProps {
@@ -16,6 +19,37 @@ export default function NotionMarkdownReader({
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Mermaid extension for marked
+    const mermaidExtension = {
+      extensions: [
+        {
+          name: 'mermaid',
+          level: 'block',
+          start(src: string) {
+            return src.match(/^```mermaid/)?.index;
+          },
+          tokenizer(src: string) {
+            const match = src.match(/^```mermaid\s*\n([\s\S]+?)```/);
+            if (match) {
+              return {
+                type: 'mermaid',
+                raw: match[0],
+                text: match[1],
+                tokens: [],
+              };
+            }
+            return undefined;
+          },
+          renderer(token: any) {
+            // Render as a div for Mermaid to process later
+            return `<div class="mermaid">${token.text}</div>`;
+          },
+        },
+      ],
+    };
+
+    marked.use(mermaidExtension);
+
     // Add a custom tokenizer for math
     const mathExtension = {
       extensions: [
@@ -104,12 +138,15 @@ export default function NotionMarkdownReader({
 
   useEffect(() => {
     if (ref.current) {
+      // Render math
       renderMathInElement(ref.current, {
         delimiters: [
           { left: '$$', right: '$$', display: true },
           { left: '$', right: '$', display: false },
         ],
       });
+      // Render mermaid diagrams
+      mermaid.init(undefined, ref.current.querySelectorAll('.mermaid'));
     }
   }, [html]);
 

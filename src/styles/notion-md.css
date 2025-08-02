@@ -158,6 +158,13 @@
   margin: 2rem 0;
 }
 
+.mermaid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1em 0;
+}
+
 @media (max-width: 768px) {
   .notion-md {
     padding: 15px;

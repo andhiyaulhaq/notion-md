@@ -165,6 +165,21 @@
   margin: 1em 0;
 }
 
+.notion-md img {
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+  display: block;
+}
+
+.notion-md iframe {
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+  display: block;
+  aspect-ratio: 16/9; /* or the aspect ratio of your video */
+}
+
 @media (max-width: 768px) {
   .notion-md {
     padding: 15px;
